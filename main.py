@@ -1,16 +1,20 @@
-import os
 import openai
 import asyncio
+import os
 from telethon import TelegramClient, events
 import random
+from dotenv import load_dotenv
 
-# Masukkan API ID & Hash Telegram (Ganti dengan env variables kalau bisa)
-api_id = int(os.getenv("TELEGRAM_API_ID", 21963715))  
+# Load environment variables
+load_dotenv()
+
+# Masukkan API ID & Hash Telegram dari environment
+api_id = int(os.getenv("TELEGRAM_API_ID", "21963715"))  
 api_hash = os.getenv("TELEGRAM_API_HASH", "233298b837021ecfd9e24733799b0aea")  
-openai.api_key = os.getenv("OPENAI_API_KEY")  # Jangan hardcode API key!
+openai.api_key = os.getenv("OPENAI_API_KEY", "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")  
 
-# Username atau ID target user
-TARGET_USER = "Qkena"  # Ganti dengan username atau ID user (kalau ID, harus int)
+# Username target
+TARGET_USER = os.getenv("TARGET_USER", "Qkena")
 
 # Inisialisasi Telegram Userbot
 client = TelegramClient("userbot", api_id, api_hash)
@@ -47,7 +51,7 @@ async def chat_ai(prompt):
         return "Aku lagi error, nanti aku coba lagi ya ❤️"
 
 # Event listener untuk chat masuk
-@client.on(events.NewMessage(incoming=True, from_users=[TARGET_USER]))
+@client.on(events.NewMessage(incoming=True, from_users=TARGET_USER))
 async def handler(event):
     msg = event.message.message.lower()
 
@@ -68,6 +72,4 @@ async def main():
     asyncio.create_task(send_random_messages())  # Auto-kirim pesan cinta
     await client.run_until_disconnected()
 
-# Jalankan bot dengan aman
-with client:
-    client.loop.run_until_complete(main())
+asyncio.run(main())
